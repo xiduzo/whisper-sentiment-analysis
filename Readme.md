@@ -24,7 +24,9 @@ It is possible to run this application in a docker container. This is useful whe
 
 ## Building docker container
 
-docker build -f Dockerfile -t whisper .
+You can use this repository to build the docker container. Alternatively, you can use the pre-built container from the [Docker Hub](https://hub.docker.com/repository/docker/xiduzo/whisper-sentiment-analysis/general).
+
+`docker build -f Dockerfile -t whisper .`
 
 ## Running docker container
 
@@ -55,6 +57,10 @@ Then run the start command again.
 4. Run docker container using your IP address:
 
 `docker run --net=host --privileged -e PULSE_SERVER=<HOST> -v ~/.config/pulse:/root/.config/pulse whisper`
+
+or using the pre-built container:
+
+`docker run --net=host --privileged -e PULSE_SERVER=<HOST> -v ~/.config/pulse:/root/.config/pulse xiduzo/whisper-sentiment-analysis`
 
 **validate that the connection is made**
 
