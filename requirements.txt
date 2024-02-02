@@ -1,0 +1,5 @@
+transformers
+webrtcvad
+build
+torch
+sounddevice
