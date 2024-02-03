@@ -14,9 +14,20 @@ run `pip install pywhispercpp`
 
 ## Install the python whisper package
 
-This step is only required when you want to add additional models.
+This project relies on the `base` model from the [whisper repo](https://github.com/ggerganov/whisper.cpp).
 
-`git clone --recurse-submodules https://github.com/abdeladim-s/pywhispercpp.git`
+In order to get the model follow the instructions below:
+
+1. Clone the repository (git clone --recurse-submodules https://github.com/abdeladim-s/pywhispercpp.git)
+2. Install the model (./pywhispercpp/whisper.cpp/models/download-ggml-model.sh base)
+
+It is possible to use other, move advanced, models:
+
+1. Clone the repository (git clone --recurse-submodules https://github.com/abdeladim-s/pywhispercpp.git)
+2. Install the model (./pywhispercpp/whisper.cpp/models/download-ggml-model.sh `<MODEL>`)
+3. Set the model path in `main.py` (model = 'pywhispercpp/whisper.cpp/models/ggml-`<MODEL>`.bin')
+
+See [this file](https://github.com/ggerganov/whisper.cpp/blob/master/models/download-ggml-model.sh#L28) for all available models.
 
 # Docker
 
@@ -90,9 +101,9 @@ TODO: add instructions for running on raspberry pi
 Read useful [Examples](https://wiki.archlinux.org/title/PulseAudio/Examples)
 
 | Command              | Description                |
-| -------------------- | -------------------------- | --- |
+| -------------------- | -------------------------- |
 | `pactl list`         | List all sinks and sources |
-| `pacmd info`         | List input devices         |     |
+| `pacmd info`         | List input devices         |
 | `pacmd list-sources` | List input devices         |
 
 **Configure temporary input device**
