@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  mqtt:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./.config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+  whisper-sentiment-analysis:
+    build:
+      context: .
+    network_mode: "host"
+    privileged: true
+    environment:
+      - PULSE_SERVER=192.168.2.20
+      - MODEL=base.en
+    volumes:
+      - ./.config/pulse/client.conf:/root/.config/pulse/client.conf
+    depends_on:
+      - mqtt

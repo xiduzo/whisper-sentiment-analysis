@@ -1,1 +1,12 @@
+# Remote repositories
 pywhispercpp
+
+# Byte-compiled / optimized / DLL files
+__pycache__
+
+# PulseAudio runtime files
+.config/pulse/*.tdb
+.config/pulse/*-runtime
+.config/pulse/cookie
+.config/pulse/*-default-sink
+.config/pulse/*-default-source

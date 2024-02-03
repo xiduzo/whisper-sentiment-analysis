@@ -8,28 +8,15 @@ To get started, install the required packages and run the application.
 
 run `pip install pywhispercpp`
 
-# Install the python whisper package
+# Setting the model
 
-This project relies on the `base` model from the [whisper repo](https://github.com/ggerganov/whisper.cpp).
+This project relies on the models from the [whisper repo](https://github.com/ggerganov/whisper.cpp).
+
+By setting the `MODEL` environment variable, you can choose which model to use. The default model is `base`.
+
+`export MODEL=<MODEL>`
+
 See [this file](https://github.com/ggerganov/whisper.cpp/blob/master/models/download-ggml-model.sh#L28) for all available models.
-
-**on non-docker machines**
-
-In order to get the model follow the instructions below:
-
-1. Clone the repository (git clone --recurse-submodules https://github.com/abdeladim-s/pywhispercpp.git)
-2. Install the model (./pywhispercpp/whisper.cpp/models/download-ggml-model.sh base)
-
-It is possible to use other, move advanced, models:
-
-1. Clone the repository (git clone --recurse-submodules https://github.com/abdeladim-s/pywhispercpp.git)
-2. Install the model (./pywhispercpp/whisper.cpp/models/download-ggml-model.sh `<MODEL>`)
-3. Set the model path in `main.py` (model = 'pywhispercpp/whisper.cpp/models/ggml-`<MODEL>`.bin')
-
-**on docker**
-
-1. Edit the `Dockerfile` and change the `RUN ./download-ggml-model.sh base` command to `RUN ./download-ggml-model.sh <MODEL>`.
-2. Set the model path in `main.py` (model = 'pywhispercpp/whisper.cpp/models/ggml-`<MODEL>`.bin')
 
 # Running the application
 
@@ -49,19 +36,7 @@ It is possible to run this application in a docker container. This is useful whe
 
 1. Install PulseAudio
 
-`brew install pulseaudio`
-
-2. Run PulseAudio Server (on your MacBook)
-
-`pulseaudio --load=module-native-protocol-tcp --exit-idle-time=-1 --daemon`
-
-**Stopping**
-
-Sometimes the server needs to be stopped and restarted. To stop the server, run the following command:
-
-`pulseaudio --kill`
-
-Then run the start command again.
+run `./install-pulseaudio-for-mac.sh` to install the pulseaudio configuration files.
 
 3. Get IP address of the host machine (your macbook)
 
@@ -73,23 +48,29 @@ You can either build the container yourself
 
 `docker build -f Dockerfile -t whisper .`
 
-`docker run --net=host --privileged -e PULSE_SERVER=<HOST> -v ~/.config/pulse:/root/.config/pulse whisper`
+`docker run --net=host --privileged -e PULSE_SERVER=<HOST> whisper`
 
 or using the pre-built container from the [Docker Hub](https://hub.docker.com/repository/docker/xiduzo/whisper-sentiment-analysis/general)
 
-`docker run --net=host --privileged -e PULSE_SERVER=<HOST> -v ~/.config/pulse:/root/.config/pulse xiduzo/whisper-sentiment-analysis`
+`docker run --net=host --privileged -e PULSE_SERVER=<HOST> xiduzo/whisper-sentiment-analysis`
+
+5. Adding additional configuration to the container (Optional)
+
+If you want to add additional configuration to the container, you can use the `-v` flag to mount a volume to the container.
+
+`-v ~/.config/pulse:/root/.config/pulse`
 
 ## validate that the connection is made
 
-Check if the server is running by running the following command:
+Check if there is a connection between the docker-container and the host machine by running the following command on the host machine:
 
 `netstat -an | grep 4713`
 
 Should say something like:
 
 ```
-tcp4       0      0  <HOST>.4713      <HOST>0.49349    ESTABLISHED
-tcp4       0      0  <HOST>.49349     <HOST>.4713      ESTABLISHED
+tcp4       0      0  <HOST>.4713      <HOST>.<PORT>    ESTABLISHED
+tcp4       0      0  <HOST>.<PORT>    <HOST>.4713      ESTABLISHED
 tcp4       0      0  *.4713           *.*              LISTEN
 tcp6       0      0  *.4713           *.*              LISTEN
 ```
@@ -98,9 +79,7 @@ tcp6       0      0  *.4713           *.*              LISTEN
 
 ### 1. Audio is not being picked up by the docker container
 
-#### 1.1 Configure PulseAudio input- and output devices on host machine
-
-Read useful [examples](https://wiki.archlinux.org/title/PulseAudio/Examples)
+Read [this blog post](https://wiki.archlinux.org/title/PulseAudio/Examples) for useful examples.
 
 | Command      | Description                |
 | ------------ | -------------------------- |

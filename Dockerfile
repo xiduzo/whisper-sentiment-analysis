@@ -18,17 +18,10 @@ WORKDIR /usr/src/app/pywhispercpp
 RUN python -m build --wheel
 RUN pip install dist/pywhispercpp-*.whl
 
-# Download the model
-WORKDIR /usr/src/app/pywhispercpp/whisper.cpp/models
-# ⚠️ Make sure to download the model which is required in the main.py file
-RUN ./download-ggml-model.sh base
-
 # Copy the main.py file
 WORKDIR /usr/src/app
 COPY main.py ./
+COPY src ./
 
-RUN pulseaudio --load=module-native-protocol-tcp --exit-idle-time=-1 --daemon
-
-# CMD ["python3"]
 CMD ["python3", "-u", "main.py"]
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
