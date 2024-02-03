@@ -8,13 +8,12 @@ To get started, install the required packages and run the application.
 
 run `pip install pywhispercpp`
 
-## Running the application
-
-`python main.py` or `python3 main.py`
-
-## Install the python whisper package
+# Install the python whisper package
 
 This project relies on the `base` model from the [whisper repo](https://github.com/ggerganov/whisper.cpp).
+See [this file](https://github.com/ggerganov/whisper.cpp/blob/master/models/download-ggml-model.sh#L28) for all available models.
+
+**on non-docker machines**
 
 In order to get the model follow the instructions below:
 
@@ -27,23 +26,26 @@ It is possible to use other, move advanced, models:
 2. Install the model (./pywhispercpp/whisper.cpp/models/download-ggml-model.sh `<MODEL>`)
 3. Set the model path in `main.py` (model = 'pywhispercpp/whisper.cpp/models/ggml-`<MODEL>`.bin')
 
-See [this file](https://github.com/ggerganov/whisper.cpp/blob/master/models/download-ggml-model.sh#L28) for all available models.
+**on docker**
 
-# Docker
+1. Edit the `Dockerfile` and change the `RUN ./download-ggml-model.sh base` command to `RUN ./download-ggml-model.sh <MODEL>`.
+2. Set the model path in `main.py` (model = 'pywhispercpp/whisper.cpp/models/ggml-`<MODEL>`.bin')
 
-It is possible to run this application in a docker container. This is useful when you don't want to install the required packages on your host machine.
+# Running the application
 
-## Building docker container
+**on non-docker machines**
 
-You can use this repository to build the docker container. Alternatively, you can use the pre-built container from the [Docker Hub](https://hub.docker.com/repository/docker/xiduzo/whisper-sentiment-analysis/general).
+`python main.py` or `python3 main.py`
 
-`docker build -f Dockerfile -t whisper .`
+**on docker**
 
-## Running docker container
+It is possible to run this application in a docker container. This is useful when you don't want to install the required packages on your host machine. Because we need to stream the audio from the host machine to the docker container, we need to install PulseAudio on the host machine and run the PulseAudio server. Then we need to run the docker container with the `--net=host` flag and set the `PULSE_SERVER` environment variable to the IP address of the host machine.
 
-### On a MacBook
+## On a Raspberry Pi
 
-Because we need to stream the audio from the host machine to the docker container, we need to install PulseAudio on the host machine and run the PulseAudio server. Then we need to run the docker container with the `--net=host` flag and set the `PULSE_SERVER` environment variable to the IP address of the host machine.
+> TODO: add instructions for running on raspberry pi
+
+## MacOS
 
 1. Install PulseAudio
 
@@ -67,13 +69,17 @@ Then run the start command again.
 
 4. Run docker container using your IP address:
 
+You can either build the container yourself
+
+`docker build -f Dockerfile -t whisper .`
+
 `docker run --net=host --privileged -e PULSE_SERVER=<HOST> -v ~/.config/pulse:/root/.config/pulse whisper`
 
-or using the pre-built container:
+or using the pre-built container from the [Docker Hub](https://hub.docker.com/repository/docker/xiduzo/whisper-sentiment-analysis/general)
 
 `docker run --net=host --privileged -e PULSE_SERVER=<HOST> -v ~/.config/pulse:/root/.config/pulse xiduzo/whisper-sentiment-analysis`
 
-**validate that the connection is made**
+## validate that the connection is made
 
 Check if the server is running by running the following command:
 
@@ -88,23 +94,17 @@ tcp4       0      0  *.4713           *.*              LISTEN
 tcp6       0      0  *.4713           *.*              LISTEN
 ```
 
-### On a Raspberry Pi
+## Troubleshooting
 
-TODO: add instructions for running on raspberry pi
+### 1. Audio is not being picked up by the docker container
 
-### Troubleshooting
+#### 1.1 Configure PulseAudio input- and output devices on host machine
 
-#### Audio is not being picked up by the docker container
+Read useful [examples](https://wiki.archlinux.org/title/PulseAudio/Examples)
 
-## Configure PulseAudio input- and output devices on host machine
-
-Read useful [Examples](https://wiki.archlinux.org/title/PulseAudio/Examples)
-
-| Command              | Description                |
-| -------------------- | -------------------------- |
-| `pactl list`         | List all sinks and sources |
-| `pacmd info`         | List input devices         |
-| `pacmd list-sources` | List input devices         |
+| Command      | Description                |
+| ------------ | -------------------------- |
+| `pactl list` | List all sinks and sources |
 
 **Configure temporary input device**
 
@@ -113,22 +113,16 @@ Read useful [Examples](https://wiki.archlinux.org/title/PulseAudio/Examples)
 | `pacmd list-sources \| grep -e 'index:' -e device.string -e 'name:'` | List input devices |
 | `pacmd set-default-source <INDEX>`                                   | Set input device   |
 
-Example output:
+Example output of listing input devices:
 
 ```
 index: 0
     name: <Channel_1__Channel_2.monitor>
-            device.string = "C49RG9x"
+            device.string = "External screen microphone"
 index: 1
     name: <Channel_1>
-            device.string = "FHD Webcam"
-index: 2
-    name: <Front_Left__Front_Right>
-            device.string = "HyperX 7.1 Audio"
-index: 3
-    name: <Front_Left__Front_Right.2.monitor>
-            device.string = "HyperX 7.1 Audio"
-* index: 4
+            device.string = "USB Audio Device"
+* index: 2
     name: <Channel_1.2>
             device.string = "MacBook Pro Microphone"
 ```
@@ -140,7 +134,7 @@ index: 3
 | `pacmd list-sinks \| grep -e 'index:' -e 'name:'` | List output devices |
 | `pacmd set-default-sink <INDEX>`                  | Set output device   |
 
-Example output:
+Example output of listing output devices:
 
 ```
 * index: 0
@@ -149,13 +143,9 @@ index: 1
 	name: <Front_Left__Front_Right.2>
 index: 2
 	name: <1__2>
-index: 3
-	name: <Channel_1__Channel_2.2>
 ```
 
-<!-- TODO: add instructions for running on raspberry pi -->
-
-## Validating audio streaming (docker -> mac)
+**Validating audio streaming (docker -> host machine)**
 
 To validate the audio streaming it is possible to play audio from the docker container --> host machine.
 
