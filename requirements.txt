@@ -3,3 +3,4 @@ webrtcvad
 build
 torch
 sounddevice
+paho-mqtt

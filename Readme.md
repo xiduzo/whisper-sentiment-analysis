@@ -56,9 +56,16 @@ or using the pre-built container from the [Docker Hub](https://hub.docker.com/re
 
 5. Adding additional configuration to the container (Optional)
 
+_pulse config_
 If you want to add additional configuration to the container, you can use the `-v` flag to mount a volume to the container.
 
 `-v ~/.config/pulse:/root/.config/pulse`
+
+_with different model_
+
+add the `-e MODEL=<MODEL_NAME>` flag to the `docker run` command.
+
+`docker run --net=host --privileged -e PULSE_SERVER=<HOST> -e MODEL=base.en whisper`
 
 ## validate that the connection is made
 
