@@ -1,22 +1,22 @@
 This is a python project using the [pywhispercpp](https://github.com/abdeladim-s/pywhispercpp.git) package to run the whisper model.
 
-To get started, install the required packages and run the application.
-
 `pip install -r requirements.txt`
 
 **on non-docker machines**
 
 run `pip install pywhispercpp`
 
-# Setting the model
+# Environment variables
 
-This project relies on the models from the [whisper repo](https://github.com/ggerganov/whisper.cpp).
+| Variable       | Description                                                                                                                      | Default value |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `MODEL`        | The model to use. See [available models](https://github.com/ggerganov/whisper.cpp/blob/master/models/download-ggml-model.sh#L28) | `base`        |
+| `PULSE_SERVER` | The IP address of the host machine. Only used when running the application in a docker container                                 | `-`           |
 
-By setting the `MODEL` environment variable, you can choose which model to use. The default model is `base`.
-
-`export MODEL=<MODEL>`
-
-See [this file](https://github.com/ggerganov/whisper.cpp/blob/master/models/download-ggml-model.sh#L28) for all available models.
+_Volumes (Optional)_
+| Volume | Maps to | Description | Default value |
+| -------------- | ---| ------------------------------------------------------------------------------------------------ | ------------- |
+| `~/.config/pulse` | `/root/.config/pulse` | The pulseaudio configuration files. Only used when running the application in a docker container | `-` |
 
 # Running the application
 
@@ -26,7 +26,9 @@ See [this file](https://github.com/ggerganov/whisper.cpp/blob/master/models/down
 
 **on docker**
 
-It is possible to run this application in a docker container. This is useful when you don't want to install the required packages on your host machine. Because we need to stream the audio from the host machine to the docker container, we need to install PulseAudio on the host machine and run the PulseAudio server. Then we need to run the docker container with the `--net=host` flag and set the `PULSE_SERVER` environment variable to the IP address of the host machine.
+It is possible to run this application in a docker container. This is useful when you don't want to install the required packages on your host machine. Because we need to stream the audio from the host machine to the docker container, we need to install PulseAudio on the host machine and run the PulseAudio server.
+
+The docker container needs to be run with the `--net=host` and `--privileged` flags to be able to connect to the PulseAudio server on the host machine.
 
 ## On a Raspberry Pi
 
@@ -36,36 +38,25 @@ It is possible to run this application in a docker container. This is useful whe
 
 1. Install PulseAudio
 
-run `./install-pulseaudio-for-mac.sh` to install the pulseaudio configuration files.
+   Requires [Homebrew](https://brew.sh/) to be installed.
 
-3. Get IP address of the host machine (your macbook)
+   run `./install-pulseaudio-for-mac.sh` to install the pulseaudio configuration files.
 
-`ipconfig getifaddr en0`
+2. Get IP address of the host machine (your macbook)
 
-4. Run docker container using your IP address:
+   `ipconfig getifaddr en0`
 
-You can either build the container yourself
+3. Run docker container using your IP address:
 
-`docker build -f Dockerfile -t whisper .`
+   You can either build the container yourself
 
-`docker run --net=host --privileged -e PULSE_SERVER=<HOST> whisper`
+   `docker build -f Dockerfile -t whisper .`
 
-or using the pre-built container from the [Docker Hub](https://hub.docker.com/repository/docker/xiduzo/whisper-sentiment-analysis/general)
+   `docker run --net=host --privileged -e PULSE_SERVER=<HOST> whisper`
 
-`docker run --net=host --privileged -e PULSE_SERVER=<HOST> xiduzo/whisper-sentiment-analysis`
+   or using the pre-built container from the [Docker Hub](https://hub.docker.com/repository/docker/xiduzo/whisper-sentiment-analysis/general)
 
-5. Adding additional configuration to the container (Optional)
-
-_pulse config_
-If you want to add additional configuration to the container, you can use the `-v` flag to mount a volume to the container.
-
-`-v ~/.config/pulse:/root/.config/pulse`
-
-_with different model_
-
-add the `-e MODEL=<MODEL_NAME>` flag to the `docker run` command.
-
-`docker run --net=host --privileged -e PULSE_SERVER=<HOST> -e MODEL=base.en whisper`
+   `docker run --net=host --privileged -e PULSE_SERVER=<HOST> xiduzo/whisper-sentiment-analysis`
 
 ## validate that the connection is made
 
@@ -135,9 +126,9 @@ index: 2
 
 To validate the audio streaming it is possible to play audio from the docker container --> host machine.
 
-| Command                                 | Description                |
-| --------------------------------------- | -------------------------- |
-| `docker ps`                             | List running containers    |
-| `docker exec -it <CONTAINER_ID> bash`   | Get into the container     |
-| `ls /usr/share/sounds/alsa/`            | List available sounds      |
-| `paplay /usr/share/sounds/alsa/<SOUND>` | Play sound on host machine |
+| Command                                 | Description                               |
+| --------------------------------------- | ----------------------------------------- |
+| `docker ps`                             | List running containers                   |
+| `docker exec -it <CONTAINER_ID> bash`   | Get into the container                    |
+| `ls /usr/share/sounds/alsa/`            | List available sounds                     |
+| `paplay /usr/share/sounds/alsa/<SOUND>` | Plays sound on host machine output device |
