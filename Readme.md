@@ -56,7 +56,7 @@ The docker container needs to be run with the `--net=host` and `--privileged` fl
 
    or using the pre-built container from the [Docker Hub](https://hub.docker.com/repository/docker/xiduzo/whisper-sentiment-analysis/general)
 
-   `docker run --net=host --privileged -e PULSE_SERVER=<HOST> xiduzo/whisper-sentiment-analysis`
+   `docker run --net=host --privileged -e PULSE_SERVER=<HOST> xiduzo/whisper-sentiment-analysis:latest`
 
 ## validate that the connection is made
 
