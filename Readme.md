@@ -2,6 +2,25 @@ This is a python project transforming sentiment analysis of audio to MQTT messag
 
 It using the [pywhispercpp](https://github.com/abdeladim-s/pywhispercpp.git) package to run the whisper model for speech-to-text and [huggingface](https://huggingface.co/models?pipeline_tag=text-classification&sort=trending) package to run the text-classification model. The output is streamed to a MQTT broker.
 
+Before we can start we need to install [ffmpeg](https://ffmpeg.org/)
+
+```bash
+# on Ubuntu or Debian
+sudo apt update && sudo apt install ffmpeg
+
+# on Arch Linux
+sudo pacman -S ffmpeg
+
+# on MacOS using Homebrew (https://brew.sh/)
+brew install ffmpeg
+
+# on Windows using Chocolatey (https://chocolatey.org/)
+choco install ffmpeg
+
+# on Windows using Scoop (https://scoop.sh/)
+scoop install ffmpeg
+```
+
 # Running the application
 
 The application is intended to be ran as a standalone application as this requires the minimal amount of effort to get started.
