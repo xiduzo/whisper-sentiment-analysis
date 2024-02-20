@@ -14,8 +14,13 @@ services:
     network_mode: "host"
     privileged: true
     environment:
-      - PULSE_SERVER=192.168.2.20
-      - MODEL=base.en
+      - TEXT_CLASSIFICATION_MODEL=SamLowe/roberta-base-go_emotions
+      - PULSE_SERVER=192.168.2.20 # Should be host ip address
+      - WHISPER_MODEL=base.en
+      - MQTT_HOST=127.0.0.1
+      # - MQTT_USER=<OPTIONAL_YOUR_MQTT_USER> # Required if your MQTT server requires authentication
+      # - MQTT_PWD=<OPTIONAL_YOUR_PWD> # Required if your MQTT server requires authentication
+      # - MQTT_BASE_TOPIC=<OPTIONAL_YOUR_PWD> # Defaults to "sentiment_analysis_base_topic"
     volumes:
       - ./.config/pulse/client.conf:/root/.config/pulse/client.conf
     depends_on:

@@ -1,11 +1,10 @@
 from transformers import pipeline
 from mqtt import client, base_topic
+import os
 
-classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", return_all_scores=True)
-# another interesting classifier
-# classifier = pipeline(task="text-classification", model="SamLowe/roberta-base-go_emotions", top_k=None)
-
-
+model = os.environ.get("TEXT_CLASSIFICATION_MODEL", "j-hartmann/emotion-english-distilroberta-base")
+classifier = pipeline("text-classification", model=model, return_all_scores=True)
+print(f"Using classifier model: {model}")
 
 def commands_callback(model_output):
     print("")
@@ -22,7 +21,7 @@ def commands_callback(model_output):
         print(f"{sentiment['label'].ljust(8)} {sentiment['score']}")
 
         # Send to MQTT
-        client.publish(base_topic + "/" + sentiment['label'], f"{sentiment['label']}: {sentiment['score']}")
+        client.publish(base_topic + "/" + sentiment['label'], sentiment['score'])
 
     print("")
     print("----------------------------------------------------")
