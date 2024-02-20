@@ -112,7 +112,7 @@ tcp6       0      0  *.4713           *.*              LISTEN
 | ------------ | -------------------------- |
 | `pactl list` | List all sinks and sources |
 
-**Configure a (temporary) input device**
+#### Configure a (temporary) input device
 
 | Command                                                              | Description                      |
 | -------------------------------------------------------------------- | -------------------------------- |
@@ -133,7 +133,7 @@ index: 1
             device.string = "MacBook Pro Microphone"
 ```
 
-**Configure a (temporary) output device**
+#### Configure a (temporary) output device
 
 | Command                                           | Description                       |
 | ------------------------------------------------- | --------------------------------- |
@@ -153,7 +153,7 @@ index: 2
 
 Read [this blog post](https://wiki.archlinux.org/title/PulseAudio/Examples) for some more useful examples.
 
-**Validating audio streaming (docker -> host machine)**
+##### Validating audio streaming (docker -> host machine)
 
 To validate that the audio streaming it working properly you can try to play audio from the docker container --> host machine.
 
@@ -164,4 +164,5 @@ Run the following commands in order:
 | `docker ps`                             | List running containers, find the CONTAINER ID of one with a name including `whisper` |
 | `docker exec -it <CONTAINER_ID> bash`   | Get into the sentiment analysis container                                             |
 | `ls /usr/share/sounds/alsa/`            | List available sounds, should be a list of `.wav` files                               |
-| `paplay /usr/share/sounds/alsa/<SOUND>` | Plays sound on host machine output device                                             |
+| `paplay /usr/share/sounds/alsa/<SOUND>` | Should play the sound on host machine output device                                   |
+| `exit`                                  | Exit the container                                                                    |
