@@ -11,7 +11,11 @@ clientID = os.environ.get("MQTT_CLIENT_ID", "mqtt_client_id") + "-" + str(random
 base_topic = os.environ.get("MQTT_BASE_TOPIC", "sentiment_analysis_base_topic")
 
 # Connect & start
-client = mqtt.Client(clientID)
+try:
+    client = mqtt.Client(clientID)
+except:
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, clientID)
+    
 if(user and pwd):
     client.username_pw_set(user, pwd)
 else:
