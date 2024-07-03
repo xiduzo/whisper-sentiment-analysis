@@ -21,7 +21,11 @@ def commands_callback(model_output):
         print(f"{sentiment['label'].ljust(8)} {sentiment['score']}")
 
         # Send to MQTT
-        client.publish(base_topic + "/" + sentiment['label'], sentiment['score'])
+        try:
+            print(f"Sending to MQTT: {base_topic}/{sentiment['label']}, {sentiment['score']}")
+            client.publish(base_topic + "/" + sentiment['label'], sentiment['score'])
+        except:
+            print("Failed to send to MQTT")
 
     print("")
     print("----------------------------------------------------")
